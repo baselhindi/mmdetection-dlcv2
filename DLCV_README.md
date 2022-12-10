@@ -30,7 +30,7 @@ python demo/image_demo.py demo/input_images/ configs/cityscapes/faster_rcnn_r50_
 
 
 
-The main modifications for this pipeline to infer on a set of images, paint the bounding boxes for pedestrian class only, and then mask everythign else:
+The modifications that allow the pipeline to infer on a set of images, paint the bounding boxes for pedestrian class only, and then mask everythign else:
 
 mask_output_image.py
 image_demo.py
