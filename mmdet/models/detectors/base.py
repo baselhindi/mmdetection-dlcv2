@@ -274,7 +274,8 @@ class BaseDetector(BaseModule, metaclass=ABCMeta):
                     score_thr=0.3,
                     bbox_color=(72, 101, 241),
                     text_color=(72, 101, 241),
-                    mask_color=None,
+                    mask_color=(255,255,255),
+                    # mask_color=None,
                     thickness=2,
                     font_size=13,
                     win_name='',
@@ -309,6 +310,9 @@ class BaseDetector(BaseModule, metaclass=ABCMeta):
         Returns:
             img (Tensor): Only if not `show` or `out_file`
         """
+        
+        print("inside show_result")
+        # print(type(img))
         img = mmcv.imread(img)
         img = img.copy()
         if isinstance(result, tuple):
@@ -318,6 +322,9 @@ class BaseDetector(BaseModule, metaclass=ABCMeta):
         else:
             bbox_result, segm_result = result, None
         bboxes = np.vstack(bbox_result)
+        # print("reached")
+        # print(type(bboxes))
+        # print(bboxes)
         labels = [
             np.full(bbox.shape[0], i, dtype=np.int32)
             for i, bbox in enumerate(bbox_result)

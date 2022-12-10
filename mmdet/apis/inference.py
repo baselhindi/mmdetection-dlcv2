@@ -242,16 +242,22 @@ def show_result_pyplot(model,
         out_file (str or None): The path to write the image.
             Default: None.
     """
-    if hasattr(model, 'module'):
-        model = model.module
-    model.show_result(
-        img,
-        result,
-        score_thr=score_thr,
-        show=True,
-        wait_time=wait_time,
-        win_name=title,
-        bbox_color=palette,
-        text_color=(200, 200, 200),
-        mask_color=palette,
-        out_file=out_file)
+
+    ### print the bounding box for person class for every image, call show_result method 
+    ### get the unmasked painted image, so that it can be masked later downstream
+    for i in range(len(img)):
+        file_name = out_file + str(i) + "_unmasked.jpg"
+        if hasattr(model, 'module'):
+            model = model.module
+        model.show_result(
+            img[i],
+            result[i],
+            score_thr=score_thr,
+            show=True,
+            wait_time=wait_time,
+            win_name=title,
+            bbox_color=palette,
+            text_color=(200, 200, 200),
+            mask_color=palette,
+            out_file=file_name)
+

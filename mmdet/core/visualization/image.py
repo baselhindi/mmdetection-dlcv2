@@ -251,6 +251,7 @@ def imshow_det_bboxes(img,
     Returns:
         ndarray: The image with bboxes drawn on it.
     """
+    
     assert bboxes is None or bboxes.ndim == 2, \
         f' bboxes ndim should be 2, but its ndim is {bboxes.ndim}.'
     assert labels.ndim == 1, \
@@ -320,6 +321,7 @@ def imshow_det_bboxes(img,
             horizontal_alignment=horizontal_alignment)
 
     if segms is not None:
+        # print("reached draw mask section")
         mask_palette = get_palette(mask_color, max_label + 1)
         colors = [mask_palette[label] for label in labels]
         colors = np.array(colors, dtype=np.uint8)

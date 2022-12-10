@@ -1,6 +1,9 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 import asyncio
 from argparse import ArgumentParser
+import json
+import os
+import cv2
 
 from mmdet.apis import (async_inference_detector, inference_detector,
                         init_detector, show_result_pyplot)
@@ -32,12 +35,55 @@ def parse_args():
 def main(args):
     # build the model from a config file and a checkpoint file
     model = init_detector(args.config, args.checkpoint, device=args.device)
-    # test a single image
-    result = inference_detector(model, args.img)
-    # show the results
+    
+    ## run inference on all images in the input folder
+    images = []
+    result =[]
+    # for filename in os.listdir("~/mmdetection/demo/input_images/"):
+    folder = "demo/input_images/"
+    # i = 0
+    for i in range(len(os.listdir(folder)) + 30):
+        for filename in os.listdir(folder):
+            check_string = "-" + f"{i:03}"
+            if check_string in filename:
+                print(filename)
+                print(os.path.join(folder,filename))
+                img = os.path.join(folder,filename)
+                if img is not None:
+                    images.append(img)
+
+                ## run inference on the model 
+                single_result = inference_detector(model, img)
+                result.append(single_result)
+
+    ## this for loop is to create bbox files for each inference individually
+    for i in range (len(result)): 
+        bbox_filename = "bboxes_folder/" + str(i) + "_bboxes_for_mask.txt"
+        clean_filename = "clean_bboxes_folder/" + str(i) + "_clean_bboxes_for_mask.txt"
+        file = open(bbox_filename, "w+")
+
+        ## iterate over all images and only write the content of the 0th category
+        ## which is the person class 
+        
+        for j in range(len(result[i][0])):
+            if result[i][0][j][4] > 0.4:
+                content = str(result[i][0][j])
+                file.write("".join(content) + "\n") 
+        file.close()
+        
+        ## clean up the bbox files such it can be interpreted downstream
+        with open(bbox_filename, 'r') as infile, \
+             open(clean_filename, 'w') as outfile:
+                data = infile.read()
+                data = data.replace("[", "")
+                data = data.replace("]", "")
+                outfile.write(data)
+
+    ## call this method on the entire array of images, rather than a single image
     show_result_pyplot(
         model,
-        args.img,
+        # args.img,
+        images,
         result,
         palette=args.palette,
         score_thr=args.score_thr,
